@@ -48,12 +48,14 @@ class Model {
 
     const q = firestore.query(firestore.collection(db, collection), firestore.orderBy("created_at"));
     const unsub = firestore.onSnapshot(q, (snapshot) => {
-      snapshot.docChanges().forEach((s) => {
-        const data = s.doc.data();
-        const time = data.created_at.toDate().toString().substr(4, 20);
-        const _class = data.username == localStorage.username ? "chat-right" : "";
-        const html = `<li class="chat-item ${_class}"><span class="chat-text"><strong>${data.username}:</strong> ${data.chat_text}</span> <span class="chat-time">${time}</span></li>`;
-        document.querySelector(".chat-content").innerHTML += html;
+      snapshot.docChanges().forEach((change) => {
+        const data = change.doc.data();
+        if (data.created_at) {
+          const time = data.created_at ? data.created_at.toDate().toString().substr(4, 20) : "unset";
+          const _class = data.username == localStorage.username ? "chat-right" : "";
+          const html = `<li class="chat-item ${_class}"><span class="chat-text"><strong>${data.username}:</strong> ${data.chat_text}</span> <span class="chat-time">${time}</span></li>`;
+          document.querySelector(".chat-content").innerHTML += html;
+        }
       });
     });
 

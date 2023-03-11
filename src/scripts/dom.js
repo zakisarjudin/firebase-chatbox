@@ -1,4 +1,5 @@
 import model from "./model.js";
+import { createCompletion } from "./openai.js";
 
 class DOM {
   constructor() {
@@ -11,10 +12,13 @@ class DOM {
   }
 
   async listenChatForm() {
+    let loading = false;
+
     this.chat_form.addEventListener("submit", (e) => {
       e.preventDefault();
 
-      if (this.chat_form.chat_text.value.length > 0) {
+      if (!loading && this.chat_form.chat_text.value.length > 0) {
+        loading = true;
         if (localStorage.username && localStorage.channel) {
           const channel = localStorage.channel;
           const data = {
@@ -22,13 +26,43 @@ class DOM {
             chat_text: this.chat_form.chat_text.value.trim(),
           };
 
-          model.addData(channel, data);
-          this.chat_form.chat_text.value = "";
+          model.addData(channel, data).then(() => {
+            if (channel === "chatgpt") {
+              const html = `<li class="chat-item "><span class="chat-text typing"><strong>AI:</strong> sedang mengetik...</span> </li>`;
+              setTimeout(() => {
+                this.chat_content.innerHTML += html;
+              }, 500);
+
+              createCompletion(this.chat_form.chat_text.value.trim())
+                .then((response) => {
+                  console.log(response);
+                  const choices = response.data.choices;
+                  choices.forEach((choice) => {
+                    const resp = {
+                      username: "AI",
+                      chat_text: choice.text.trim(),
+                    };
+                    document.querySelector(".typing").closest("li").remove();
+                    model.addData(channel, resp);
+                  });
+                })
+                .catch((err) => alert(err));
+            }
+
+            this.chat_form.chat_text.value = "";
+            loading = false;
+          });
         } else if (!localStorage.username) {
           alert("sorry, let us know your name first");
+          loading = false;
         } else {
           alert("please choose a group to start chat");
+          loading = false;
         }
+      } else if (loading) {
+        alert("please wait...");
+      } else {
+        alert("you have left a blank form");
       }
     });
   }
@@ -43,18 +77,35 @@ class DOM {
       this.register_form.addEventListener("submit", (e) => {
         e.preventDefault();
 
-        const username = this.register_form.username.value.trim();
-        if (username) {
+        const username = this.register_form.username.value.trim().toLowerCase();
+
+        if (username && username != "ai") {
           localStorage.setItem("username", username);
 
           register_wrapper.classList.add("d-none");
           this.username.innerHTML = localStorage.username;
+        } else {
+          alert("please choose another username");
         }
       });
     }
   }
 
   listenChannelChange() {
+    // if channel exist or selected
+    if (localStorage.channel) {
+      const channels = document.querySelectorAll(".channel");
+
+      channels.forEach((channel) => {
+        if (channel.getAttribute("data-id") == localStorage.channel) {
+          channel.classList.add("active");
+          this.chat_content.innerHTML = "";
+          this.model.subscribe(localStorage.channel);
+        }
+      });
+    }
+
+    // start listening if channel changed
     this.channel_list.addEventListener("click", (e) => {
       const active_channel = document.querySelector(".active");
       if (e.target.tagName === "LI") {

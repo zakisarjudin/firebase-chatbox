@@ -210,3 +210,7 @@ label {
 .d-none {
   display: none;
 }
+
+.typing {
+  background: linear-gradient(-90deg, #23a6d5, #23d5ab) !important;
+}

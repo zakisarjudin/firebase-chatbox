@@ -26,6 +26,7 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
-    "firebase": "^9.17.2"
+    "firebase": "^9.17.2",
+    "openai": "^3.2.1"
   }
 }
