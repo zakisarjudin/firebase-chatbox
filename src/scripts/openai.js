@@ -1,22 +1,24 @@
-const { Configuration, OpenAIApi } = require("openai");
-const OPENAI_API_KEY = "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";
-
-const configuration = new Configuration({
-  apiKey: OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(configuration);
-
 export const createCompletion = async function (prompt = "") {
-  const response = await openai.createCompletion({
-    model: "text-davinci-003",
+  let details = {
     prompt: prompt,
-    temperature: 0,
-    max_tokens: 1024,
-    top_p: 1,
-    frequency_penalty: 0.0,
-    presence_penalty: 0.0,
+  };
+
+  let formBody = [];
+  for (let property in details) {
+    let encodedKey = encodeURIComponent(property);
+    let encodedValue = encodeURIComponent(details[property]);
+    formBody.push(encodedKey + "=" + encodedValue);
+  }
+  formBody = formBody.join("&");
+
+  const request = await fetch("https://remarkable-marzipan-5750ff.netlify.app/.netlify/functions/server/createCompletion", {
+    method: "POST",
+    mode: "cors",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: formBody,
   });
 
-  return response;
+  return request.json();
 };

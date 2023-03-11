@@ -35,7 +35,7 @@ class DOM {
 
               createCompletion(this.chat_form.chat_text.value.trim())
                 .then((response) => {
-                  const choices = response.data.choices;
+                  const choices = response.choices;
                   choices.forEach((choice) => {
                     const resp = {
                       username: "AI",
