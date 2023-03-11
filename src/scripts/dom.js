@@ -28,14 +28,13 @@ class DOM {
 
           model.addData(channel, data).then(() => {
             if (channel === "chatgpt") {
-              const html = `<li class="chat-item "><span class="chat-text typing"><strong>AI:</strong> sedang mengetik...</span> </li>`;
+              const html = `<li class="chat-item "><span class="chat-text typing"><strong>AI:</strong> typing...</span> </li>`;
               setTimeout(() => {
                 this.chat_content.innerHTML += html;
-              }, 500);
+              }, 250);
 
               createCompletion(this.chat_form.chat_text.value.trim())
                 .then((response) => {
-                  console.log(response);
                   const choices = response.data.choices;
                   choices.forEach((choice) => {
                     const resp = {
@@ -46,7 +45,10 @@ class DOM {
                     model.addData(channel, resp);
                   });
                 })
-                .catch((err) => alert(err));
+                .catch((err) => {
+                  alert(err);
+                  document.querySelector(".typing").closest("li").remove();
+                });
             }
 
             this.chat_form.chat_text.value = "";

@@ -55,6 +55,12 @@ class Model {
           const _class = data.username == localStorage.username ? "chat-right" : "";
           const html = `<li class="chat-item ${_class}"><span class="chat-text"><strong>${data.username}:</strong> ${data.chat_text}</span> <span class="chat-time">${time}</span></li>`;
           document.querySelector(".chat-content").innerHTML += html;
+          // set auto scroll
+          const element = document.querySelector(".chat-container");
+          element.scroll({
+            top: element.scrollHeight,
+            behavior: "smooth",
+          });
         }
       });
     });
