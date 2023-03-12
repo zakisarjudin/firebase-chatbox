@@ -31,6 +31,12 @@ class DOM {
               const html = `<li class="chat-item "><span class="chat-text typing"><strong>AI:</strong> typing...</span> </li>`;
               setTimeout(() => {
                 this.chat_content.innerHTML += html;
+                // set auto scroll
+                const element = document.querySelector(".chat-container");
+                element.scroll({
+                  top: element.scrollHeight,
+                  behavior: "smooth",
+                });
               }, 250);
               // const _typingId = model.addData(channel, {username: "AI", chat_text: "typing..."});
 
