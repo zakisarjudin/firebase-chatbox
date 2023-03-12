@@ -28,6 +28,7 @@ class Model {
     data.created_at = firestore.serverTimestamp();
     const docRef = await firestore.addDoc(firestore.collection(db, collection), data);
     console.log("Document written with ID: ", docRef.id);
+    return docRef.id;
   }
 
   static async updateData(collection, id, data = {}) {

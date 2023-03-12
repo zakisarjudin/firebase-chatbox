@@ -32,6 +32,7 @@ class DOM {
               setTimeout(() => {
                 this.chat_content.innerHTML += html;
               }, 250);
+              // const _typingId = model.addData(channel, {username: "AI", chat_text: "typing..."});
 
               createCompletion(this.chat_form.chat_text.value.trim())
                 .then((response) => {
@@ -42,7 +43,8 @@ class DOM {
                       chat_text: choice.text.trim(),
                     };
                     document.querySelector(".typing").closest("li").remove();
-                    model.addData(channel, resp);
+                    model.updateData(channel, resp);
+                    // model.updateData(channel, _typingId, resp);
                   });
                 })
                 .catch((err) => {
