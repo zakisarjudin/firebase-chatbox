@@ -13,7 +13,6 @@ export const createCompletion = async function (prompt = "") {
 
   const request = await fetch("https://remarkable-marzipan-5750ff.netlify.app/.netlify/functions/server/createCompletion", {
     method: "POST",
-    mode: "cors",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },

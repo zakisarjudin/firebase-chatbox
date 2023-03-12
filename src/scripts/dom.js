@@ -43,7 +43,7 @@ class DOM {
                       chat_text: choice.text.trim(),
                     };
                     document.querySelector(".typing").closest("li").remove();
-                    model.updateData(channel, resp);
+                    model.addData(channel, resp);
                     // model.updateData(channel, _typingId, resp);
                   });
                 })
